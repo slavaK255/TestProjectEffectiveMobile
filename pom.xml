@@ -168,14 +168,16 @@
                 <version>1.4</version>
                 <executions>
                     <execution>
-                        <id>integration-test</id>
+                        <id>generate-openapi</id>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <apiDocsUrl>http://localhost:8080/v3/api-docs</apiDocsUrl>
-                            <outputDir>${project.basedir}/src/main/resources/docs</outputDir>
+                            <outputDir>${project.basedir}/docs</outputDir>
                             <outputFileName>openapi.yaml</outputFileName>
+                            <format>yaml</format>
                         </configuration>
                     </execution>
                 </executions>
