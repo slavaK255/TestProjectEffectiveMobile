@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.example.bankcards.controller;
+package com.example.bankcards.controller.card;
 
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.dto.change_status.ChangeStatusDto;
@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
-@Tag(name = "Card Management", description = "Operations with cards")
+@Tag(name = "Card management", description = "Operations with cards")
 public interface CardController {
 
     @Operation(

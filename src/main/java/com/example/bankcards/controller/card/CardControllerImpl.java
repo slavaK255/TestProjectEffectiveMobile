@@ -1,4 +1,4 @@
-package com.example.bankcards.controller;
+package com.example.bankcards.controller.card;
 
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.dto.change_status.ChangeStatusDto;
@@ -8,7 +8,6 @@ import com.example.bankcards.dto.filter.CardFilterDto;
 import com.example.bankcards.dto.transfer.CardCurrentBalanceDto;
 import com.example.bankcards.dto.transfer.TransferRequestDto;
 import com.example.bankcards.service.card.CardService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,7 +25,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/card")
-public class CardControllerImpl implements CardController{
+public class CardControllerImpl implements CardController {
 
     private final CardService cardService;
 
@@ -61,6 +60,5 @@ public class CardControllerImpl implements CardController{
     public Page<CardDto> getCardPage(@RequestBody CardFilterDto cardFilterDto, Authentication authentication){
         return cardService.getCardPage(cardFilterDto, authentication);
     }
-
 
 }

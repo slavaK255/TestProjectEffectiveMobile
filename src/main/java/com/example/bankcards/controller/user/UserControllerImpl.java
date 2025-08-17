@@ -1,5 +1,6 @@
-package com.example.bankcards.controller;
+package com.example.bankcards.controller.user;
 
+import com.example.bankcards.controller.user.UserController;
 import com.example.bankcards.dto.UserDto;
 import com.example.bankcards.dto.create_user.CreateUserRequestDto;
 import com.example.bankcards.dto.create_user.CreateUserResponseDto;
@@ -11,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,14 +36,14 @@ public class UserControllerImpl implements UserController {
         return userService.updateUser(userDto);
     }
 
-    @DeleteMapping("delete")
-    public String deleteUser(@RequestParam @NotNull Long userId) {
+    @DeleteMapping("delete/{userId}")
+    public String deleteUser(@PathVariable @NotNull Long userId) {
         userService.deleteUser(userId);
         return "deleted user with id" + userId;
     }
 
-    @GetMapping("get/id")
-    public UserDto getUserById(@RequestParam @NotNull Long userId){
+    @GetMapping("get/{userId}")
+    public UserDto getUserById(@PathVariable @NotNull Long userId){
         return userService.getUserById(userId);
     }
 }

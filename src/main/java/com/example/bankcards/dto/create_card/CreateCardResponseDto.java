@@ -1,16 +1,14 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.create_card;
 
 import com.example.bankcards.entity.CardStatus;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Builder
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 public class CreateCardResponseDto {
     private String cardNumber;
     private String userName;

@@ -1,19 +1,28 @@
-package com.example.bankcards.service;
+package com.example.bankcards.security;
 
 import com.example.bankcards.dto.jwt.JwtRequestDto;
 import com.example.bankcards.dto.jwt.JwtResponseDto;
+import com.example.bankcards.entity.JwtAuthentication;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.WorkWithUserException;
 import com.example.bankcards.service.user.UserService;
+import io.jsonwebtoken.Claims;
+import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final JwtProvider jwtProvider;
     private final UserService userService;
-    //TODO
+    private final Map<String, String> refreshStorage = new HashMap<>();
+
     public JwtResponseDto login(@NonNull JwtRequestDto authRequest) {
         final User user = userService.findByLogin(authRequest.getLogin());
         if (user.getPassword().equals(authRequest.getPassword())) {
@@ -24,35 +33,37 @@ public class AuthService {
             throw new IllegalArgumentException("Неправильный пароль");
         }
     }
-    //TODO
-//    public JwtResponseDto getAccessToken(@NonNull String refreshToken) {
-//        if (jwtProvider.validateRefreshToken(refreshToken)) {
-//            final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-//            final String login = claims.getSubject();
-//            final String saveRefreshToken = refreshStorage.get(login);
-//            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-//                final User user = userService.findByLogin(login);
-//                final String accessToken = jwtProvider.generateAccessToken(user);
-//                return new JwtResponseDto(accessToken, null);
-//            }
-//        }
-//        return new JwtResponseDto(null, null);
-//    }
-//
-//    public JwtResponseDto refresh(@NonNull String refreshToken) {
-//        if (jwtProvider.validateRefreshToken(refreshToken)) {
-//            final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-//            final String login = claims.getSubject();
-//            final String saveRefreshToken = refreshStorage.get(login);
-//            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-//                final User user = userService.getByLogin(login)
-//                        .orElseThrow(() -> new AuthException("Пользователь не найден"));
-//                final String accessToken = jwtProvider.generateAccessToken(user);
-//                final String newRefreshToken = jwtProvider.generateRefreshToken(user);
-//                refreshStorage.put(user.getLogin(), newRefreshToken);
-//                return new JwtResponseDto(accessToken, newRefreshToken);
-//            }
-//        }
-//        throw new AuthException("Невалидный JWT токен");
-//    }
+    public JwtResponseDto getAccessToken(@NonNull String refreshToken) {
+        if (jwtProvider.validateRefreshToken(refreshToken)) {
+            final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
+            final String login = claims.getSubject();
+            final String saveRefreshToken = refreshStorage.get(login);
+            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
+                final User user = userService.findByLogin(login);
+                final String accessToken = jwtProvider.generateAccessToken(user);
+                return new JwtResponseDto(accessToken, null);
+            }
+        }
+        return new JwtResponseDto(null, null);
+    }
+
+    public JwtResponseDto refresh(@NonNull String refreshToken)  {
+        if (jwtProvider.validateRefreshToken(refreshToken)) {
+            final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
+            final String login = claims.getSubject();
+            final String saveRefreshToken = refreshStorage.get(login);
+            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
+                final User user = userService.findByLogin(login);
+                final String accessToken = jwtProvider.generateAccessToken(user);
+                final String newRefreshToken = jwtProvider.generateRefreshToken(user);
+                refreshStorage.put(user.getLogin(), newRefreshToken);
+                return new JwtResponseDto(accessToken, newRefreshToken);
+            }
+        }
+        throw new WorkWithUserException("Невалидный JWT токен");
+    }
+
+    public JwtAuthentication getAuthInfo() {
+        return (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
+    }
 }

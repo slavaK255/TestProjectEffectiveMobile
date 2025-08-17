@@ -1,2 +1,13 @@
-package com.example.bankcards;public class Bank_REST_Application {
+package com.example.bankcards;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.retry.annotation.EnableRetry;
+
+@EnableRetry
+@SpringBootApplication
+public class Bank_REST_Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Bank_REST_Application.class, args);
+    }
 }
