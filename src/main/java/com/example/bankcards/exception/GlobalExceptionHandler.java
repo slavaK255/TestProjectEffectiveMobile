@@ -4,6 +4,7 @@ import jakarta.persistence.OptimisticLockException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,6 +12,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+/**
+ * Глобальный обработчик исключений для REST API.
+ * Централизованно обрабатывает исключения, возникающие в контроллерах, и возвращает структурированные ответы.
+ * Преобразует различные типы исключений в соответствующие HTTP-статусы и форматы ошибок.
+ */
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -39,6 +45,13 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleCardNotFoundException(CardNotFoundException e) {
         log.error("Resource not found: {}", e.getMessage(), e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handleBadCredentialsException(BadCredentialsException e) {
+        log.error("Incorrect password for user" + e.getMessage(), e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getLocalizedMessage());
     }
 
     @ExceptionHandler(OptimisticLockException.class)

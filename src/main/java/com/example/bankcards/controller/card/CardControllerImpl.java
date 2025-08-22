@@ -29,7 +29,7 @@ public class CardControllerImpl implements CardController {
 
     private final CardService cardService;
 
-    @GetMapping("new")
+    @PostMapping("new")
     @PreAuthorize("hasAuthority('ADMIN')")
     public CreateCardResponseDto createCard(@Valid @RequestBody CreateCardDto createCardDto) {
         return cardService.createNewCard(createCardDto);
@@ -47,7 +47,7 @@ public class CardControllerImpl implements CardController {
         return cardService.getAllCard();
     }
 
-    @PostMapping("/transfer")
+    @PostMapping("transfer")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     public List<CardCurrentBalanceDto> transferBetweenCards(
             @Valid @RequestBody TransferRequestDto transferRequestDto,
@@ -55,7 +55,7 @@ public class CardControllerImpl implements CardController {
         return cardService.transferBetweenCard(transferRequestDto,authentication);
     }
 
-    @GetMapping("get/page")
+    @GetMapping("page")
     @PreAuthorize("hasAuthority('USER')")
     public Page<CardDto> getCardPage(@RequestBody CardFilterDto cardFilterDto, Authentication authentication){
         return cardService.getCardPage(cardFilterDto, authentication);

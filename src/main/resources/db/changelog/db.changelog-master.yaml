@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changeset/user_jwt_V001__initial.sql
   - include:
       file: db/changelog/changeset/V002_add_version.sql
+  - include:
+      file: db/changelog/changeset/V003_block_request_table.sql

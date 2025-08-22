@@ -1,3 +1,9 @@
+--liquibase formatted sql
+--changeset Svyatoslav:001
+--preconditions onFail:MARK_RAN
+--precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'user_jwt'
+--precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'card'
+
 CREATE TABLE user_jwt (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY UNIQUE,
     login varchar(64) UNIQUE NOT NULL,
@@ -16,3 +22,6 @@ CREATE TABLE card (
 
     CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user_jwt (id)
 );
+
+--rollback DROP TABLE IF EXISTS user_jwt;
+--rollback DROP TABLE IF EXISTS card;

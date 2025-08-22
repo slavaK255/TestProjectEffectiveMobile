@@ -1,6 +1,5 @@
 package com.example.bankcards.controller.user;
 
-import com.example.bankcards.controller.user.UserController;
 import com.example.bankcards.dto.UserDto;
 import com.example.bankcards.dto.create_user.CreateUserRequestDto;
 import com.example.bankcards.dto.create_user.CreateUserResponseDto;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

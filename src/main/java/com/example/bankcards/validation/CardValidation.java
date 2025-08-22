@@ -9,8 +9,13 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * Сервис для валидации данных, связанных с банковскими картами.
+ * Выполняет проверки срока действия карт, принадлежности карт пользователю и достаточности средств.
+ */
 @Service
 public class CardValidation {
+
     public boolean isExpiryDateValid(CreateCardDto createCardDto) {
         LocalDate checkedDate = createCardDto.getExpiryDate();
 

@@ -19,6 +19,7 @@ import java.security.Key;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Slf4j
@@ -37,24 +38,26 @@ public class JwtProvider {
     }
 
     public String generateAccessToken(@NonNull User user) {
-        final LocalDateTime now = LocalDateTime.now();
-        final Instant accessExpirationInstant = now.plusMinutes(5).atZone(ZoneId.systemDefault()).toInstant();
-        final Date accessExpiration = Date.from(accessExpirationInstant);
+        final Instant now = Instant.now();
+        final Instant accessExpiration = now.plus(5, ChronoUnit.MINUTES);
+        final Date date = Date.from(accessExpiration);
+
         return Jwts.builder()
-                .setSubject(user.getLogin())
-                .setExpiration(accessExpiration)
+                .subject(user.getLogin())
+                .expiration(date)
                 .signWith(jwtAccessSecret)
                 .claim("role", user.getRole())
                 .compact();
     }
 
     public String generateRefreshToken(@NonNull User user) {
-        final LocalDateTime now = LocalDateTime.now();
-        final Instant refreshExpirationInstant = now.plusDays(30).atZone(ZoneId.systemDefault()).toInstant();
-        final Date refreshExpiration = Date.from(refreshExpirationInstant);
+        final Instant now = Instant.now();
+        final Instant refreshExpiration = now.plus(30, ChronoUnit.DAYS);
+        final Date date = Date.from(refreshExpiration);
+
         return Jwts.builder()
-                .setSubject(user.getLogin())
-                .setExpiration(refreshExpiration)
+                .subject(user.getLogin())
+                .expiration(date)
                 .signWith(jwtRefreshSecret)
                 .compact();
     }
@@ -67,12 +70,12 @@ public class JwtProvider {
         return validateToken(refreshToken, jwtRefreshSecret);
     }
 
-    private boolean validateToken(@NonNull String token, @NonNull Key secret) {
+    private boolean validateToken(@NonNull String token, @NonNull SecretKey secret) {
         try {
             Jwts.parser()
-                    .setSigningKey(secret)
+                    .verifyWith(secret)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
             return true;
         } catch (ExpiredJwtException expEx) {
             log.error("Token expired", expEx);
@@ -80,10 +83,10 @@ public class JwtProvider {
             log.error("Unsupported jwt", unsEx);
         } catch (MalformedJwtException mjEx) {
             log.error("Malformed jwt", mjEx);
-        } catch (SignatureException sEx) {
+        } catch (SecurityException sEx) {
             log.error("Invalid signature", sEx);
         } catch (Exception e) {
-            log.error("invalid token", e);
+            log.error("Invalid token", e);
         }
         return false;
     }
@@ -96,12 +99,11 @@ public class JwtProvider {
         return getClaims(token, jwtRefreshSecret);
     }
 
-    private Claims getClaims(@NonNull String token, @NonNull Key secret) {
+    private Claims getClaims(@NonNull String token, @NonNull SecretKey secret) {
         return Jwts.parser()
-                .setSigningKey(secret)
+                .verifyWith(secret)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
-
 }

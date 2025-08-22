@@ -7,9 +7,18 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+/**
+ * Конфигурационный класс для настройки OpenAPI (Swagger) документации.
+ * Определяет основную информацию о API и настраивает схему аутентификации.
+ */
 @Configuration
 public class OpenApiConfig {
+
+    /**
+     * Создает и настраивает объект OpenAPI для документации REST API.
+     * Включает информацию о названии, версии, описании API, контактах и лицензии.
+     * Также настраивает схему аутентификации через JWT токен.
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()

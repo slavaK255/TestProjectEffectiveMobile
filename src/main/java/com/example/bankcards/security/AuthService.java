@@ -10,7 +10,9 @@ import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -21,16 +23,18 @@ import java.util.Map;
 public class AuthService {
     private final JwtProvider jwtProvider;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
     private final Map<String, String> refreshStorage = new HashMap<>();
 
     public JwtResponseDto login(@NonNull JwtRequestDto authRequest) {
         final User user = userService.findByLogin(authRequest.getLogin());
-        if (user.getPassword().equals(authRequest.getPassword())) {
+        if (passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
             final String accessToken = jwtProvider.generateAccessToken(user);
             final String refreshToken = jwtProvider.generateRefreshToken(user);
+            refreshStorage.put(user.getLogin(), refreshToken);
             return new JwtResponseDto(accessToken, refreshToken);
         } else {
-            throw new IllegalArgumentException("Неправильный пароль");
+            throw new BadCredentialsException("Неправильный пароль");
         }
     }
     public JwtResponseDto getAccessToken(@NonNull String refreshToken) {

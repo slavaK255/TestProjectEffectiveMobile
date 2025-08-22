@@ -65,7 +65,7 @@ class CardControllerImplTest {
 
         when(cardService.createNewCard(any(CreateCardDto.class))).thenReturn(response);
 
-        mockMvc.perform(get("/api/v1/card/new")
+        mockMvc.perform(post("/api/v1/card/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -139,7 +139,7 @@ class CardControllerImplTest {
         when(cardService.getCardPage(any(CardFilterDto.class), any(Authentication.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(get("/api/v1/card/get/page")
+        mockMvc.perform(get("/api/v1/card/page")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(filter))
                         .principal(auth))
@@ -155,7 +155,7 @@ class CardControllerImplTest {
         mockMvc.perform(get("/api/v1/card/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test

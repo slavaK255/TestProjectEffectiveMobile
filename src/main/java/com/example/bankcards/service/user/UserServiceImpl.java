@@ -9,6 +9,7 @@ import com.example.bankcards.mapper.UserMapper;
 import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+
 
     public User findByLogin(String login) {
         log.info("trying to find user by login : " + login);
@@ -42,7 +45,9 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.toEntity(createUserRequestDto);
+        user.setPassword(passwordEncoder.encode(createUserRequestDto.getPassword()));
         userRepository.save(user);
+
         return userMapper.toCreateUserResponseDto(user);
     }
 
@@ -56,7 +61,7 @@ public class UserServiceImpl implements UserService {
             user.setUserName(userDto.getUserName());
         }
         if (userDto.getPassword() != null) {
-            user.setPassword(userDto.getPassword());
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
         if (userDto.getRole() != null) {
             user.setRole(userDto.getRole());
